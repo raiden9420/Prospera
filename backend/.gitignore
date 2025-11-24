@@ -410,3 +410,7 @@ __pycache__/
 # Local configuration overrides
 config_local.py
 settings_local.py 
+
+backend\.env
+frontend\node_modules
+myenv

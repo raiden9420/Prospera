@@ -123,7 +123,21 @@ async def visualize_data(
         query = request.query.lower()
         
         # Determine intent and call appropriate service method
-        # Determine intent and call appropriate service method
+        # Prefer explicit category requests (e.g., "spend by category", "category breakdown")
+        if any(phrase in query for phrase in ['category', 'breakdown', 'distribution', 'spend by', 'spending by']):
+            period = "last_month" # Default
+            if "last 3 months" in query or "3 months" in query:
+                period = "last_3_months"
+            elif "last 6 months" in query or "6 months" in query:
+                period = "last_6_months"
+            elif "last year" in query or "1 year" in query:
+                period = "last_year"
+
+            # Include demo transactions (in-memory) so charts reflect user-added demo data
+            demo_transactions = get_demo_transactions(sessionid)
+            return await visualization_service.get_category_breakdown(sessionid, period, demo_transactions=demo_transactions)
+
+        # Next, handle trend/over-time requests
         if any(word in query for word in ['trend', 'over time', 'history', 'spending']):
             period = "last_6_months" # Default
             if "last year" in query or "1 year" in query:
@@ -132,26 +146,15 @@ async def visualize_data(
                 period = "last_3_months"
             elif "last month" in query or "1 month" in query:
                 period = "last_month"
-                
+
             return await visualization_service.get_spending_trend(sessionid, period)
-            
-        elif any(word in query for word in ['category', 'breakdown', 'distribution', 'spend by']):
-            period = "last_month" # Default
-            if "last 3 months" in query or "3 months" in query:
-                period = "last_3_months"
-            elif "last 6 months" in query or "6 months" in query:
-                period = "last_6_months"
-            elif "last year" in query or "1 year" in query:
-                period = "last_year"
-                
-            return await visualization_service.get_category_breakdown(sessionid, period)
-            
-        elif any(word in query for word in ['portfolio', 'investment', 'allocation', 'asset']):
+
+        # Investment/portfolio requests
+        if any(word in query for word in ['portfolio', 'investment', 'allocation', 'asset']):
             return await visualization_service.get_investment_portfolio(sessionid)
-            
-        else:
-            # Default to spending trend if unclear
-            return await visualization_service.get_spending_trend(sessionid)
+
+        # Default to spending trend if unclear
+        return await visualization_service.get_spending_trend(sessionid)
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

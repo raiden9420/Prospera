@@ -12,6 +12,8 @@ interface VisualizationMessage {
         chartType: string;
         data: any[];
         options: any;
+        breakdown?: Array<{ category: string; amount: number; percent: number }>;
+        total?: number;
     };
 }
 
@@ -47,6 +49,16 @@ export const VisualizationChat: React.FC = () => {
         try {
             const response = await apiService.visualize(messageText);
 
+            // Debug: log the raw response so we can inspect what the backend returned
+            console.debug('visualize response', response);
+
+            // If backend returned breakdown but not data array, synthesize the data array here
+            if (!response.data && response.breakdown) {
+                response.data = [["Category", "Amount"], ...response.breakdown.map((b: any) => [b.category, b.amount])];
+                response.chartType = response.chartType || 'PieChart';
+                response.options = response.options || { title: 'Spending by Category' };
+            }
+
             const aiMessage: VisualizationMessage = {
                 id: (Date.now() + 1).toString(),
                 text: response.error ? `I couldn't generate that chart: ${response.error}` : "Here is the visualization you requested:",
@@ -55,7 +67,9 @@ export const VisualizationChat: React.FC = () => {
                 chartData: response.error ? undefined : {
                     chartType: response.chartType,
                     data: response.data,
-                    options: response.options
+                    options: response.options,
+                    breakdown: response.breakdown,
+                    total: response.total
                 }
             };
 
@@ -155,6 +169,21 @@ export const VisualizationChat: React.FC = () => {
                                     data={message.chartData.data}
                                     options={message.chartData.options}
                                 />
+
+                                {/* Breakdown list */}
+                                {message.chartData.breakdown && (
+                                    <div className="max-w-2xl bg-white rounded-lg shadow-sm p-4 border border-gray-200 mt-3">
+                                        <h4 className="text-sm font-medium text-gray-700 mb-2">Category Breakdown</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {message.chartData.breakdown.map((b: any) => (
+                                                <div key={b.category} className="flex items-center space-x-2 bg-gray-50 px-3 py-1 rounded-md">
+                                                    <span className="text-sm font-medium text-gray-800">{b.category}</span>
+                                                    <span className="text-xs text-gray-500">• ₹{b.amount.toLocaleString()} ({b.percent}%)</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
