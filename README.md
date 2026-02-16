@@ -1,8 +1,8 @@
-# Prospera: AI-Powered Personal Finance Assistant 🚀
+# Prospera: AI-Powered Personal Finance Assistant 
 
 Prospera is an intelligent financial agent designed to provide personalized insights, spending analysis, and goal tracking. It leverages **Google Gemini** for natural language understanding and implements the **Model Context Protocol (MCP)** to securely fetch simulated financial data from a mock banking server.
 
-## 🏗️ Architecture
+## Architecture
 
 The project follows a decoupled, 3-tier architecture:
 
@@ -12,7 +12,7 @@ The project follows a decoupled, 3-tier architecture:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 * **💬 Natural Language Chat:** Ask questions like *"How much did I spend on food last month?"* or *"Analyze my investment portfolio."*.
 * **📊 Dynamic Visualizations:** The AI generates on-the-fly charts for spending trends and category breakdowns.
@@ -22,7 +22,7 @@ The project follows a decoupled, 3-tier architecture:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Frontend:** React, TypeScript, Tailwind CSS, Vite, Google Charts.
 * **Backend:** Python 3.8+, FastAPI, Google Generative AI (Gemini 1.5 Flash), HTTPX.
@@ -30,7 +30,7 @@ The project follows a decoupled, 3-tier architecture:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 You will need three separate terminal windows to run the full stack.
 
@@ -102,7 +102,7 @@ This mock server provides the raw financial data.
 
 ---
 
-## 📱 How to Use (Demo Credentials)
+## How to Use (Demo Credentials)
 
 Since the MCP server uses mock data files, you must log in using specific phone numbers that correspond to the data folders in `fi-mcp-dev/test_data_dir`.
 
@@ -123,7 +123,7 @@ Since the MCP server uses mock data files, you must log in using specific phone 
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 Prospera/
